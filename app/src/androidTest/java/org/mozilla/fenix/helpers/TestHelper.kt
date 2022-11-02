@@ -20,7 +20,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.espresso.Espresso
@@ -41,25 +43,26 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
-import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.io.File
 import java.util.Locale
 import java.util.regex.Pattern
 import junit.framework.AssertionFailedError
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Assert
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -147,24 +150,19 @@ object TestHelper {
         }
     }
 
-    // Remove test file from Google Photos (AOSP) on Firebase
-    fun deleteDownloadFromStorage() {
-        val deleteButton = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/trash"))
-        deleteButton.waitForExists(waitingTime)
-        deleteButton.click()
-
-        // Sometimes there's a secondary confirmation
-        try {
-            val deleteConfirm = mDevice.findObject(UiSelector().text("Got it"))
-            deleteConfirm.waitForExists(waitingTime)
-            deleteConfirm.click()
-        } catch (e: UiObjectNotFoundException) {
-            // Do nothing
+    fun deleteDownloadFromStorage(fileName: String) {
+        runBlocking {
+            val downloadedFile = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                fileName
+            )
+            if (downloadedFile.exists()) {
+                downloadedFile.delete()
+                assertFalse(downloadedFile.exists())
+            } else {
+                Log.d("TestLog", "File not found")
+            }
         }
-
-        val trashIt = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/move_to_trash"))
-        trashIt.waitForExists(waitingTime)
-        trashIt.click()
     }
 
     fun setNetworkEnabled(enabled: Boolean) {
