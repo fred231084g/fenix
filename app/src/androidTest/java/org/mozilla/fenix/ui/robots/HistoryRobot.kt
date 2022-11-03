@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
@@ -119,7 +120,7 @@ private fun testPageTitle() = onView(allOf(withId(R.id.title), withText("Test_Pa
 private fun pageUrl() = onView(withId(R.id.url))
 
 private fun deleteButton(title: String) =
-    onView(allOf(withId(R.id.overflow_menu), hasSibling(withText(title))))
+    onView(allOf(withContentDescription("Delete"), hasSibling(withText(title))))
 
 private fun deleteButton() = onView(withId(R.id.history_delete))
 

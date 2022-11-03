@@ -15,7 +15,6 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -30,6 +29,7 @@ import org.mozilla.fenix.helpers.TestHelper.denyPermission
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.grantPermission
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.setCustomSearchEngine
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
@@ -155,13 +155,13 @@ class SearchTest {
         }
     }
 
-    @Ignore("Failure caused by bugs: https://github.com/mozilla-mobile/fenix/issues/23818")
+    //@Ignore("Failure caused by bugs: https://github.com/mozilla-mobile/fenix/issues/23818")
     @SmokeTest
     @Test
     fun searchGroupShowsInRecentlyVisitedTest() {
         queryString = "test search"
-        val firstPage = getGenericAsset(searchMockServer, 1)
-        val secondPage = getGenericAsset(searchMockServer, 2)
+//        val firstPage = getGenericAsset(searchMockServer, 1)
+//        val secondPage = getGenericAsset(searchMockServer, 2)
         // setting our custom mockWebServer search URL
         val searchString =
             "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
@@ -178,12 +178,17 @@ class SearchTest {
         }.submitQuery(queryString) {
             longClickLink("Link 1")
             clickContextOpenLinkInNewTab()
+            snackBarButtonClick()
+            waitForPageToLoad()
+            mDevice.pressBack()
             longClickLink("Link 2")
             clickContextOpenLinkInNewTab()
-        }.openTabDrawer {
-        }.openTab(firstPage.title) {
-        }.openTabDrawer {
-        }.openTab(secondPage.title) {
+            snackBarButtonClick()
+            waitForPageToLoad()
+//        }.openTabDrawer {
+//        }.openTab(firstPage.title) {
+//        }.openTabDrawer {
+//        }.openTab(secondPage.title) {
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
@@ -228,7 +233,7 @@ class SearchTest {
         }
     }
 
-    @Ignore("Failure caused by bugs: https://github.com/mozilla-mobile/fenix/issues/23818")
+    //@Ignore("Failure caused by bugs: https://github.com/mozilla-mobile/fenix/issues/23818")
     @SmokeTest
     @Test
     fun deleteItemsFromSearchGroupsHistoryTest() {
@@ -250,12 +255,13 @@ class SearchTest {
         }.submitQuery(queryString) {
             longClickLink("Link 1")
             clickContextOpenLinkInNewTab()
+            snackBarButtonClick()
+            waitForPageToLoad()
+            mDevice.pressBack()
             longClickLink("Link 2")
             clickContextOpenLinkInNewTab()
-        }.openTabDrawer {
-        }.openTab(firstPage.title) {
-        }.openTabDrawer {
-        }.openTab(secondPage.title) {
+            snackBarButtonClick()
+            waitForPageToLoad()
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
