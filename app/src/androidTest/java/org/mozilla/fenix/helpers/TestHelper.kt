@@ -158,6 +158,7 @@ object TestHelper {
             )
             if (downloadedFile.exists()) {
                 downloadedFile.delete()
+                Thread.sleep(10000)
                 assertFalse(downloadedFile.exists())
             } else {
                 Log.d("TestLog", "File not found")
