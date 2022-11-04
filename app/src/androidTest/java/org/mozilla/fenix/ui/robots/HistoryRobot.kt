@@ -24,6 +24,7 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -62,7 +63,7 @@ class HistoryRobot {
 
     fun verifyFirstTestPageTitle(title: String) = assertTestPageTitle(title)
 
-    fun verifyTestPageUrl(expectedUrl: Uri) = assertPageUrl(expectedUrl)
+    fun verifyTestPageUrl(expectedUrl: Uri) = pageUrl(expectedUrl.toString()).check(matches(isDisplayed()))
 
     fun verifyCopySnackBarText() = assertCopySnackBarText()
 
@@ -100,9 +101,34 @@ class HistoryRobot {
         snackBarUndoButton().click()
     }
 
+    fun verifySearchGroupDisplayed(shouldBeDisplayed: Boolean, searchTerm: String, groupSize: Int) {
+        // checks if the search group exists in the Recently visited section
+        if (shouldBeDisplayed) {
+            assertTrue(
+                mDevice.findObject(UiSelector().text(searchTerm))
+                    .getFromParent(UiSelector().text("$groupSize sites"))
+                    .waitForExists(TestAssetHelper.waitingTimeShort),
+            )
+        } else {
+            assertFalse(
+                mDevice.findObject(UiSelector().text(searchTerm))
+                    .getFromParent(UiSelector().text("$groupSize sites"))
+                    .waitForExists(TestAssetHelper.waitingTimeShort),
+            )
+        }
+    }
+
     class Transition {
         fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice.pressBack()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun openWebsite(url: Uri, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            assertHistoryListExists()
+            onView(withText(url.toString())).click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -117,7 +143,7 @@ fun historyMenu(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
 
 private fun testPageTitle() = onView(allOf(withId(R.id.title), withText("Test_Page_1")))
 
-private fun pageUrl() = onView(withId(R.id.url))
+private fun pageUrl(url: String) = onView(allOf(withId(R.id.url), withText(url)))
 
 private fun deleteButton(title: String) =
     onView(allOf(withContentDescription("Delete"), hasSibling(withText(title))))
@@ -143,7 +169,7 @@ private fun assertEmptyHistoryView() =
         .check(matches(withText("No history here")))
 
 private fun assertHistoryListExists() =
-    mDevice.findObject(UiSelector().resourceId("R.id.history_list")).waitForExists(waitingTime)
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/history_list")).waitForExists(waitingTime)
 
 private fun assertHistoryItemExists(shouldExist: Boolean, item: String) {
     if (shouldExist) {
@@ -159,10 +185,6 @@ private fun assertVisitedTimeTitle() =
 private fun assertTestPageTitle(title: String) = testPageTitle()
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
     .check(matches(withText(title)))
-
-private fun assertPageUrl(expectedUrl: Uri) = pageUrl()
-    .check(matches(ViewMatchers.isCompletelyDisplayed()))
-    .check(matches(withText(Matchers.containsString(expectedUrl.toString()))))
 
 private fun assertDeleteConfirmationMessage() {
     assertTrue(deleteHistoryPromptTitle().waitForExists(waitingTime))

@@ -20,7 +20,13 @@ gcloud:
 
   test-targets:
     - class org.mozilla.fenix.ui.SearchTest#searchGroupShowsInRecentlyVisitedTest
-    - class org.mozilla.fenix.ui.SearchTest#deleteItemsFromSearchGroupsHistoryTest
+    - class org.mozilla.fenix.ui.SearchTest#deleteItemsFromSearchGroupHistoryTest
+    - class org.mozilla.fenix.ui.SearchTest#searchGroupGeneratedInTheSameTabTest
+    - class org.mozilla.fenix.ui.SearchTest#verifySearchGroupHistoryWithNoDuplicatesTest
+    - class org.mozilla.fenix.ui.SearchTest#verifySearchGroupHistoryWithNoDuplicatesTest
+    - class org.mozilla.fenix.ui.SearchTest#sharePageFromASearchGroupTest
+    - class org.mozilla.fenix.ui.SearchTest#deleteSearchGroupFromHistoryTest
+    - class org.mozilla.fenix.ui.SearchTest#reopenTabsFromSearchGroupTest
 #    - notPackage org.mozilla.fenix.screenshots
 #    - notPackage org.mozilla.fenix.syncintegration
 
