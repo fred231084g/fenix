@@ -56,6 +56,7 @@ class SearchTest {
         HomeActivityTestRule(
             isPocketEnabled = false,
             isJumpBackInCFREnabled = false,
+            isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
         ),
@@ -301,7 +302,7 @@ class SearchTest {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
             togglePrivateBrowsingModeOnOff()
-            verifyCurrentSearchGroupIsDisplayed(false, queryString, 3)
+            verifyRecentlyVisitedSearchGroupDisplayed(false, queryString, 3)
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryItemExists(false, "3 sites")

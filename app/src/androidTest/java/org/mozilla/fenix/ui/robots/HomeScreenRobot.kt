@@ -577,6 +577,7 @@ class HomeScreenRobot {
         }
 
         fun openRecentlyVisitedSearchGroupHistoryList(title: String, interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
+            scrollToElementByText("Recently visited")
             val searchGroup = mDevice.findObject(UiSelector().text(title))
             searchGroup.waitForExists(waitingTimeShort)
             searchGroup.click()
